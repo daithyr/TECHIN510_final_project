@@ -57,7 +57,7 @@ def home():
             st.session_state.page = "search"
         else:
             st.session_state.page = "recommendation"
-        st.experimental_rerun()
+        st.rerun()
 
 # Search Page
 def search():
@@ -80,13 +80,13 @@ def search():
         if map_center:
             m = folium.Map(location=map_center, zoom_start=10)
             folium.Marker(location=map_center, popup=f"{city} Recommended Trails Area").add_to(m)
-            st.components.v1.html(m._repr_html_(), height=500)
+            st_folium(m, width=700, height=500)
         else:
             st.warning("Unable to retrieve city coordinates. Map not available.")
     
     if st.button("Back to Home"):
         st.session_state.pop("page", None)
-        st.experimental_rerun()
+        st.rerun()
 
 # Recommendation Page
 def recommendation():
@@ -102,13 +102,13 @@ def recommendation():
         if map_center:
             m = folium.Map(location=map_center, zoom_start=10)
             folium.Marker(location=map_center, popup=f"{city} Recommended Trails Area").add_to(m)
-            st.components.v1.html(m._repr_html_(), height=500)
+            st_folium(m, width=700, height=500)
         else:
             st.warning("Unable to retrieve city coordinates. Map not available.")
     
     if st.button("Back to Home"):
         st.session_state.pop("page", None)
-        st.experimental_rerun()
+        st.rerun()
 
 # Main App
 def main():
