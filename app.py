@@ -98,72 +98,7 @@ def display_weather_info(city):
     else:
         st.warning("Please enter a valid city.")
 
-# def get_weather_data(latitude, longitude):
-#     base_url = "https://api.meteomatics.com"
-#     username = os.getenv("METEOMATICS_USERNAME")
-#     password = os.getenv("METEOMATICS_PASSWORD")
-    
-#     now = datetime.utcnow()
-#     parameters = "t_2m:C,weather_symbol_1h:idx,t_min_2m_24h:C,t_max_2m_24h:C,precip_type_5min:idx"
-#     time_range = f"{now.strftime('%Y-%m-%dT%H:%M:%SZ')},{(now + timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ')},{(now + timedelta(days=2)).strftime('%Y-%m-%dT%H:%M:%SZ')},{(now + timedelta(days=3)).strftime('%Y-%m-%dT%H:%M:%SZ')}"
-#     url = f"{base_url}/{time_range}/{parameters}/{latitude},{longitude}/json"
-    
-#     try:
-#         response = requests.get(url, auth=(username, password))
-#         if response.status_code == 200:
-#             return response.json()
-#         else:
-#             st.warning("Failed to retrieve weather data.")
-#             return None
-#     except requests.exceptions.RequestException as e:
-#         st.error(f"Request error: {e}")
-#         return None
 
-# weather_emojis = {
-#     1: "☀️",  # Clear sky
-#     2: "⛅",  # Partly cloudy
-#     3: "☁️",  # Cloudy
-#     4: "🌧️",  # Rain
-#     5: "🌨️",  # Rain and snow mixed
-#     6: "❄️",  # Snow
-#     7: "🌨️",  # Sleet
-#     8: "🌧️❄️",  # Freezing rain
-#     9: "🌨️"   # Hail
-# }
-
-# def display_weather_info(city):
-#     coordinates = get_city_coordinates(city)
-#     if coordinates:
-#         latitude, longitude = coordinates
-#         weather_data = get_weather_data(latitude, longitude)
-#         if weather_data:
-#             st.subheader(f"Weather Forecast for {city}")
-
-#             # Current temperature and precipitation type
-#             current_temp = weather_data['data'][0]['coordinates'][0]['dates'][0]['value'] if weather_data['data'] and weather_data['data'][0]['coordinates'] else "N/A"
-#             current_precip_type = weather_data['data'][4]['coordinates'][0]['dates'][0]['value'] if weather_data['data'] and weather_data['data'][4]['coordinates'] else 0
-#             current_emoji = weather_emojis.get(current_precip_type, "")
-#             st.write(f"Current Temperature: {current_temp}°C {current_emoji}")
-
-#             # Weather forecast for the next 3 days
-#             forecast_data = []
-#             for i in range(1, 4):
-#                 if weather_data['data'] and weather_data['data'][0]['coordinates'] and len(weather_data['data'][0]['coordinates'][0]['dates']) > i:
-#                     date = weather_data['data'][0]['coordinates'][0]['dates'][i]['date']
-#                     min_temp = weather_data['data'][2]['coordinates'][0]['dates'][i]['value'] if weather_data['data'] and weather_data['data'][2]['coordinates'] else "N/A"
-#                     max_temp = weather_data['data'][3]['coordinates'][0]['dates'][i]['value'] if weather_data['data'] and weather_data['data'][3]['coordinates'] else "N/A"
-#                     precip_type = weather_data['data'][4]['coordinates'][0]['dates'][i]['value'] if weather_data['data'] and weather_data['data'][4]['coordinates'] else 0
-#                     emoji = weather_emojis.get(precip_type, "")
-#                     forecast_data.append({"date": date, "min_temp": min_temp, "max_temp": max_temp, "emoji": emoji})
-
-#             # Display weather forecast
-#             for day in forecast_data:
-#                 date = datetime.strptime(day['date'], "%Y-%m-%dT%H:%M:%SZ").strftime("%a, %b %d")
-#                 st.write(f"{day['emoji']} {date}: {day['min_temp']}°C - {day['max_temp']}°C")
-#         else:
-#             st.warning("Failed to retrieve weather data.")
-#     else:
-#         st.warning("Please enter a valid city.")
 
 def generate_summary(city, difficulty, length, elevation, season, pet_friendly, user_preferences):
     prompt = f"""
@@ -285,8 +220,8 @@ def display_search_filters(city):
     display_weather_info(city)
     
     difficulty = st.selectbox("Difficulty Level", ["Easy", "Moderate", "Difficult"])
-    length = st.slider("Trail Length (miles)", min_value=0.0, max_value=10.0, step=0.5)
-    elevation = st.slider("Elevation Gain (feet)", min_value=0, max_value=1000, step=100)
+    length = st.slider("Trail Length (miles)", min_value=0.0, max_value=20.0, step=0.5)
+    elevation = st.slider("Elevation Gain (feet)", min_value=0, max_value=2500, step=100)
     season = st.selectbox("Season", ["Spring", "Summer", "Fall", "Winter"])
     pet_friendly = st.checkbox("Pet-Friendly")
     
