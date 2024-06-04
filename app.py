@@ -77,6 +77,19 @@ def get_weather_data(latitude, longitude):
 #     else:
 #         st.warning("Failed to retrieve city coordinates.")
 
+# Define the weather emojis dictionary
+weather_emojis = {
+    1: "☀️",  # Clear sky
+    2: "⛅",  # Partly cloudy
+    3: "☁️",  # Cloudy
+    4: "🌧️",  # Rain
+    5: "🌨️",  # Rain and snow mixed
+    6: "❄️",  # Snow
+    7: "🌨️",  # Sleet
+    8: "🌧️❄️",  # Freezing rain
+    9: "🌨️"   # Hail
+}
+
 def display_weather_info(city):
     coordinates = get_city_coordinates(city)
     if coordinates:
@@ -85,17 +98,17 @@ def display_weather_info(city):
         if weather_data:
             st.subheader(f"Weather Forecast for {city}")
 
-            # Current temperature
+            # Current temperature and precipitation type
             current_temp = weather_data['data'][0]['coordinates'][0]['dates'][0]['value']
-            current_weather_symbol = weather_data['data'][1]['coordinates'][0]['dates'][0]['value']
-            current_emoji = weather_emojis.get(current_weather_symbol, "")
+            current_precip_type = weather_data['data'][4]['coordinates'][0]['dates'][0]['value']
+            current_emoji = weather_emojis.get(current_precip_type, "")
             st.write(f"Current Temperature: {current_temp}°C {current_emoji}")
 
             # Weather forecast for the next 3 days
             forecast_data = [
-                {"date": weather_data['data'][0]['coordinates'][0]['dates'][1]['date'], "min_temp": weather_data['data'][2]['coordinates'][0]['dates'][1]['value'], "max_temp": weather_data['data'][3]['coordinates'][0]['dates'][1]['value'], "emoji": weather_emojis.get(weather_data['data'][1]['coordinates'][0]['dates'][1]['value'], "")},
-                {"date": weather_data['data'][0]['coordinates'][0]['dates'][2]['date'], "min_temp": weather_data['data'][2]['coordinates'][0]['dates'][2]['value'], "max_temp": weather_data['data'][3]['coordinates'][0]['dates'][2]['value'], "emoji": weather_emojis.get(weather_data['data'][1]['coordinates'][0]['dates'][2]['value'], "")},
-                {"date": weather_data['data'][0]['coordinates'][0]['dates'][3]['date'], "min_temp": weather_data['data'][2]['coordinates'][0]['dates'][3]['value'], "max_temp": weather_data['data'][3]['coordinates'][0]['dates'][3]['value'], "emoji": weather_emojis.get(weather_data['data'][1]['coordinates'][0]['dates'][3]['value'], "")}
+                {"date": weather_data['data'][0]['coordinates'][0]['dates'][1]['date'], "min_temp": weather_data['data'][2]['coordinates'][0]['dates'][1]['value'], "max_temp": weather_data['data'][3]['coordinates'][0]['dates'][1]['value'], "emoji": weather_emojis.get(weather_data['data'][4]['coordinates'][0]['dates'][1]['value'], "")},
+                {"date": weather_data['data'][0]['coordinates'][0]['dates'][2]['date'], "min_temp": weather_data['data'][2]['coordinates'][0]['dates'][2]['value'], "max_temp": weather_data['data'][3]['coordinates'][0]['dates'][2]['value'], "emoji": weather_emojis.get(weather_data['data'][4]['coordinates'][0]['dates'][2]['value'], "")},
+                {"date": weather_data['data'][0]['coordinates'][0]['dates'][3]['date'], "min_temp": weather_data['data'][2]['coordinates'][0]['dates'][3]['value'], "max_temp": weather_data['data'][3]['coordinates'][0]['dates'][3]['value'], "emoji": weather_emojis.get(weather_data['data'][4]['coordinates'][0]['dates'][3]['value'], "")}
             ]
 
             # Display weather forecast
