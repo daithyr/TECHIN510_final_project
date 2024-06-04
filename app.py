@@ -2,11 +2,7 @@ import os
 import google.generativeai as genai
 from dotenv import load_dotenv
 import streamlit as st
-import folium
-from geopy.geocoders import Nominatim
 import requests
-import streamlit as st
-
 
 # Load environment variables
 load_dotenv()
@@ -14,30 +10,6 @@ load_dotenv()
 # Configure the GenAI API
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel('gemini-pro')
-
-def get_weather_data(city):
-    api_key = "WEATHER_API_KEY"
-    base_url = "http://api.openweathermap.org/data/2.5/weather"
-    params = {
-        "q": city,
-        "appid": api_key,
-        "units": "metric"
-    }
-    response = requests.get(base_url, params=params)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return None
-
-def display_weather_info(city):
-    weather_data = get_weather_data(city)
-    if weather_data:
-        st.subheader(f"Weather Conditions in {city}")
-        st.write(f"Temperature: {weather_data['main']['temp']}°C")
-        st.write(f"Humidity: {weather_data['main']['humidity']}%")
-        st.write(f"Weather Description: {weather_data['weather'][0]['description']}")
-    else:
-        st.warning("Failed to retrieve weather data.")
 
 def generate_recommendations(city):
     prompt = f"""
@@ -64,15 +36,29 @@ def generate_filtered_recommendations(city, difficulty, length, elevation, seaso
     response = model.generate_content(prompt)
     return response.text
 
-def get_city_coordinates(city):
-    geolocator = Nominatim(user_agent="hiking_trail_app")
-    location = geolocator.geocode(city)
-    if location:
-        return [location.latitude, location.longitude]
+def get_weather_data(city):
+    api_key = os.getenv("OPENWEATHERMAP_API_KEY")
+    base_url = "http://api.openweathermap.org/data/2.5/weather"
+    params = {
+        "q": city,
+        "appid": api_key,
+        "units": "metric"
+    }
+    response = requests.get(base_url, params=params)
+    if response.status_code == 200:
+        return response.json()
     else:
         return None
 
-
+def display_weather_info(city):
+    weather_data = get_weather_data(city)
+    if weather_data:
+        st.subheader(f"Weather Forecast for {city}")
+        st.write(f"Temperature: {weather_data['main']['temp']}°C")
+        st.write(f"Humidity: {weather_data['main']['humidity']}%")
+        st.write(f"Weather Description: {weather_data['weather'][0]['description']}")
+    else:
+        st.warning("Failed to retrieve weather data.")
 
 # Home Page
 def home():
@@ -86,12 +72,15 @@ def home():
             st.session_state.page = "search"
         else:
             st.session_state.page = "recommendation"
-        st.rerun()
+        st.experimental_rerun()
 
 # Search Page
 def search():
     city = st.session_state.city
     st.header(f"Search Hiking Trails in {city}")
+    
+    # Weather Forecast
+    display_weather_info(city)
     
     # Filter options
     difficulty = st.selectbox("Difficulty Level", ["Easy", "Moderate", "Difficult"])
@@ -103,19 +92,10 @@ def search():
     if st.button("Apply Filters"):
         filtered_recommendations = generate_filtered_recommendations(city, difficulty, length, elevation, season, pet_friendly)
         st.write(filtered_recommendations)
-        
-        # Display overall traffic map of recommended trails
-        map_center = get_city_coordinates(city)
-        if map_center:
-            m = folium.Map(location=map_center, zoom_start=10)
-            folium.Marker(location=map_center, popup=f"{city} Recommended Trails Area").add_to(m)
-            st_folium(m, width=700, height=500)
-        else:
-            st.warning("Unable to retrieve city coordinates. Map not available.")
     
     if st.button("Back to Home"):
         st.session_state.pop("page", None)
-        st.rerun()
+        st.experimental_rerun()
 
 # Recommendation Page
 def recommendation():
@@ -125,19 +105,10 @@ def recommendation():
     if st.button("Get Recommendations"):
         recommendations = generate_recommendations(city)
         st.write(recommendations)
-        
-        # Display overall traffic map of recommended trails
-        map_center = get_city_coordinates(city)
-        if map_center:
-            m = folium.Map(location=map_center, zoom_start=10)
-            folium.Marker(location=map_center, popup=f"{city} Recommended Trails Area").add_to(m)
-            st_folium(m, width=700, height=500)
-        else:
-            st.warning("Unable to retrieve city coordinates. Map not available.")
     
     if st.button("Back to Home"):
         st.session_state.pop("page", None)
-        st.rerun()
+        st.experimental_rerun()
 
 # Main App
 def main():
