@@ -10,12 +10,31 @@ load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel('gemini-pro')
 
-def generate_recommendations(city, user_preferences):
+def generate_summary(city, difficulty, length, elevation, season, pet_friendly, user_preferences):
+    prompt = f"""
+    Provide a brief summary of the user's hiking trail preferences based on the following information:
+    City: {city}
+    Difficulty Level: {difficulty}
+    Trail Length: {length} miles
+    Elevation Gain: {elevation} feet
+    Season: {season}
+    Pet-Friendly: {pet_friendly}
+    User Preferences: {user_preferences}
+    """
+    response = model.generate_content(prompt)
+    return response.text
+
+def generate_recommendations(city, difficulty, length, elevation, season, pet_friendly, user_preferences):
     prompt = f"""
     You are an expert in recommending hiking trails based on the city and user preferences.
     Provide the top 5 hiking trails for the given city that match the user's specific needs.
-    Include a brief description of each trail, its difficulty level, length, elevation gain, notable features, and the AllTrails link.
+    Include a brief description of each trail with relevant emojis, its difficulty level, length, elevation gain, notable features, and the AllTrails link.
     City: {city}
+    Difficulty Level: {difficulty}
+    Trail Length: {length} miles
+    Elevation Gain: {elevation} feet
+    Season: {season}
+    Pet-Friendly: {pet_friendly}
     User Preferences: {user_preferences}
     """
     response = model.generate_content(prompt)
@@ -52,8 +71,9 @@ def search():
     st.markdown(
         """
         <style>
-        .stSlider {
-            color: green;
+        .stButton button {
+            background-color: green;
+            color: white;
         }
         </style>
         """,
@@ -62,9 +82,18 @@ def search():
     
     # Generate recommendations button
     if st.button("Get Recommendations"):
-        recommendations = generate_recommendations(city, user_preferences)
+        summary = generate_summary(city, difficulty, length, elevation, season, pet_friendly, user_preferences)
+        st.subheader("Summary of Your Preferences")
+        st.write(summary)
+        
+        recommendations = generate_recommendations(city, difficulty, length, elevation, season, pet_friendly, user_preferences)
         st.subheader("Recommended Hiking Trails")
         st.write(recommendations)
+    
+    # Back to city selection button
+    if st.button("Back to City Selection"):
+        st.session_state.pop("city", None)
+        st.experimental_rerun()
 
 # Main App
 def main():
