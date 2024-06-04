@@ -14,7 +14,7 @@ Harness the power of AI and real-time weather data to find the best hiking trail
 - **Geopy**: Utilized for geocoding to convert city names to geographical coordinates.
 - **dotenv**: Manages environment variables securely.
 
-## Problems We Are Trying to Solve
+## Problems I Am Trying to Solve
 - **Personalized Trail Recommendations**: Finding the perfect hiking trail that matches individual preferences, such as difficulty level, length, elevation gain, and pet-friendliness, can be challenging.
 - **Accurate Weather Information**: Hikers need accurate and up-to-date weather information to plan their trips safely and enjoyably.
 - **User-Friendly Experience**: Creating an intuitive and interactive interface that guides users seamlessly through the process of finding and preparing for a hike.
