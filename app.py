@@ -14,16 +14,24 @@ def generate_recommendations(city):
     prompt = f"""
     You are an expert in recommending hiking trails based on the city.
     Provide the top 5 hiking trails for the given city.
-    Include a brief description of each trail, its difficulty level, and any notable features.
+    Include a brief description of each trail, its difficulty level, length, elevation gain, and any notable features.
     City: {city}
     """
     response = model.generate_content(prompt)
     return response.text
 
-def filter_trails(trails, difficulty, length, elevation):
-    # Implement your trail filtering logic based on the selected filters
-    filtered_trails = trails  # Replace with your actual filtering code
-    return filtered_trails
+def generate_filtered_recommendations(city, difficulty, length, elevation):
+    prompt = f"""
+    You are an expert in recommending hiking trails based on the city and specified filters.
+    Provide the top 5 hiking trails for the given city that match the following criteria:
+    - Difficulty Level: {difficulty}
+    - Maximum Trail Length: {length} miles
+    - Maximum Elevation Gain: {elevation} feet
+    Include a brief description of each trail, its difficulty level, length, elevation gain, and any notable features.
+    City: {city}
+    """
+    response = model.generate_content(prompt)
+    return response.text
 
 # Home Page
 def home():
@@ -51,9 +59,8 @@ def recommendations():
     elevation = st.slider("Elevation Gain (feet)", min_value=0, max_value=1000, step=100)
     
     if st.button("Apply Filters"):
-        # Implement your trail filtering logic based on the selected filters
-        filtered_trails = filter_trails(trails, difficulty, length, elevation)
-        st.write(filtered_trails)
+        filtered_recommendations = generate_filtered_recommendations(city, difficulty, length, elevation)
+        st.write(filtered_recommendations)
     
     if st.button("Back to Home"):
         st.experimental_set_query_params(page="home")
