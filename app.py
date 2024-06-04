@@ -99,17 +99,21 @@ def display_weather_info(city):
             st.subheader(f"Weather Forecast for {city}")
 
             # Current temperature and precipitation type
-            current_temp = weather_data['data'][0]['coordinates'][0]['dates'][0]['value']
-            current_precip_type = weather_data['data'][4]['coordinates'][0]['dates'][0]['value']
+            current_temp = weather_data['data'][0]['coordinates'][0]['dates'][0]['value'] if weather_data['data'] and weather_data['data'][0]['coordinates'] else "N/A"
+            current_precip_type = weather_data['data'][4]['coordinates'][0]['dates'][0]['value'] if weather_data['data'] and weather_data['data'][4]['coordinates'] else 0
             current_emoji = weather_emojis.get(current_precip_type, "")
             st.write(f"Current Temperature: {current_temp}°C {current_emoji}")
 
             # Weather forecast for the next 3 days
-            forecast_data = [
-                {"date": weather_data['data'][0]['coordinates'][0]['dates'][1]['date'], "min_temp": weather_data['data'][2]['coordinates'][0]['dates'][1]['value'], "max_temp": weather_data['data'][3]['coordinates'][0]['dates'][1]['value'], "emoji": weather_emojis.get(weather_data['data'][4]['coordinates'][0]['dates'][1]['value'], "")},
-                {"date": weather_data['data'][0]['coordinates'][0]['dates'][2]['date'], "min_temp": weather_data['data'][2]['coordinates'][0]['dates'][2]['value'], "max_temp": weather_data['data'][3]['coordinates'][0]['dates'][2]['value'], "emoji": weather_emojis.get(weather_data['data'][4]['coordinates'][0]['dates'][2]['value'], "")},
-                {"date": weather_data['data'][0]['coordinates'][0]['dates'][3]['date'], "min_temp": weather_data['data'][2]['coordinates'][0]['dates'][3]['value'], "max_temp": weather_data['data'][3]['coordinates'][0]['dates'][3]['value'], "emoji": weather_emojis.get(weather_data['data'][4]['coordinates'][0]['dates'][3]['value'], "")}
-            ]
+            forecast_data = []
+            for i in range(1, 4):
+                if weather_data['data'] and weather_data['data'][0]['coordinates'] and len(weather_data['data'][0]['coordinates'][0]['dates']) > i:
+                    date = weather_data['data'][0]['coordinates'][0]['dates'][i]['date']
+                    min_temp = weather_data['data'][2]['coordinates'][0]['dates'][i]['value'] if weather_data['data'] and weather_data['data'][2]['coordinates'] else "N/A"
+                    max_temp = weather_data['data'][3]['coordinates'][0]['dates'][i]['value'] if weather_data['data'] and weather_data['data'][3]['coordinates'] else "N/A"
+                    precip_type = weather_data['data'][4]['coordinates'][0]['dates'][i]['value'] if weather_data['data'] and weather_data['data'][4]['coordinates'] else 0
+                    emoji = weather_emojis.get(precip_type, "")
+                    forecast_data.append({"date": date, "min_temp": min_temp, "max_temp": max_temp, "emoji": emoji})
 
             # Display weather forecast
             for day in forecast_data:
@@ -172,7 +176,7 @@ def home():
     city = st.text_input("Enter the city")
     if city:
         st.session_state.city = city
-        st.experimental_rerun()
+        st.rerun()
 
 # Display Popular Trails
 def display_popular_trails(city):
@@ -190,7 +194,7 @@ def display_popular_trails(city):
     
     if st.button("Dismiss and Proceed to Search"):
         st.session_state.show_search_filters = True
-        st.experimental_rerun()
+        st.rerun()
 
 # Display Search Filters and Recommendations
 def display_search_filters(city):
@@ -231,7 +235,7 @@ def display_search_filters(city):
     if st.button("Back to City Selection"):
         st.session_state.pop("city", None)
         st.session_state.pop("show_search_filters", None)
-        st.experimental_rerun()
+        st.rerun()
 
 # Search Page
 def search():
@@ -363,7 +367,7 @@ if __name__ == "__main__":
 #     city = st.text_input("Enter the city")
 #     if city:
 #         st.session_state.city = city
-#         st.experimental_rerun()
+#         st.rerun()
 
 # # Display Popular Trails
 # def display_popular_trails(city):
@@ -373,7 +377,7 @@ if __name__ == "__main__":
     
 #     if st.button("Dismiss and Proceed to Search"):
 #         st.session_state.show_search_filters = True
-#         st.experimental_rerun()
+#         st.rerun()
 
 # # Display Search Filters and Recommendations
 # def display_search_filters(city):
@@ -406,7 +410,7 @@ if __name__ == "__main__":
 #     if st.button("Back to City Selection"):
 #         st.session_state.pop("city", None)
 #         st.session_state.pop("show_search_filters", None)
-#         st.experimental_rerun()
+#         st.rerun()
 
 # # Search Page
 # def search():
