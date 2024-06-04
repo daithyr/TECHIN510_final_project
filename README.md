@@ -14,7 +14,7 @@ Harness the power of AI and real-time weather data to find the best hiking trail
 - **Geopy**: Utilized for geocoding to convert city names to geographical coordinates.
 - **dotenv**: Manages environment variables securely.
 
-## Problems I Am Trying to Solve
+## Problems We Are Trying to Solve
 - **Personalized Trail Recommendations**: Finding the perfect hiking trail that matches individual preferences, such as difficulty level, length, elevation gain, and pet-friendliness, can be challenging.
 - **Accurate Weather Information**: Hikers need accurate and up-to-date weather information to plan their trips safely and enjoyably.
 - **User-Friendly Experience**: Creating an intuitive and interactive interface that guides users seamlessly through the process of finding and preparing for a hike.
@@ -50,7 +50,7 @@ Harness the power of AI and real-time weather data to find the best hiking trail
 
 ## Reflections
 
-### What I Learned
+### What You Learned
 - **API Integration**: Successfully integrated multiple APIs to fetch and display data seamlessly.
 - **Error Handling**: Implemented robust error handling to provide meaningful feedback to users, especially for invalid city names.
 - **User Interface Design**: Designed an intuitive interface using Streamlit to enhance user experience.
@@ -59,6 +59,8 @@ Harness the power of AI and real-time weather data to find the best hiking trail
 ### Questions/Problems Faced
 - **City Recognition Issues**: Ensuring the app accurately recognizes and validates city names. This involved prompting users to re-enter city names if they were not found or misspelled.
 - **Weather Data Mapping**: Mapping weather data indices to appropriate emojis to provide clear and intuitive weather forecasts for users.
+- **AllTrails Link Accuracy**: Ensuring the accuracy of external AllTrails links can be challenging. Users are advised to verify the links manually to ensure they lead to the correct trail information.
 - **User Experience Challenges**: Balancing the amount of information displayed to users while keeping the interface simple and user-friendly. Ensuring the app remains functional and valuable even when some data points are unavailable.
 
 Feel free to contribute or raise issues if you encounter any problems!
+
