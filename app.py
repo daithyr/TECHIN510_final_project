@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import streamlit as st
 import requests
 from datetime import datetime, timedelta
+from requests.exceptions import RequestException, JSONDecodeError
 
 # Load environment variables
 load_dotenv()
@@ -55,12 +56,15 @@ def get_weather_data(city):
         "format": "json"
     }
     
-    # Make the API request
-    response = requests.get(base_url, auth=(username, password), params=params)
-    
-    if response.status_code == 200:
-        return response.json()
-    else:
+    try:
+        # Make the API request
+        response = requests.get(base_url, auth=(username, password), params=params)
+        
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return None
+    except (RequestException, JSONDecodeError):
         return None
 
 def display_weather_info(city):
@@ -71,7 +75,7 @@ def display_weather_info(city):
         st.write(f"Relative Humidity: {weather_data['data'][1]['coordinates'][0]['dates'][0]['value']}%")
     else:
         st.warning("Failed to retrieve weather data.")
-
+        
 # Home Page
 def home():
     st.title("Hiking Trail Recommendations")
