@@ -60,6 +60,8 @@ def display_weather_info(city):
             current_temp = weather_data['data'][0]['coordinates'][0]['dates'][0]['value']
             st.write(f"Current Temperature: {current_temp}°C")
             
+            weather_emojis = {1: "☀️", 2: "⛅", 3: "☁️", 4: "🌧️", 5: "❄️"}
+            
             # Weather forecast for the next 3 days
             forecast_data = [
                 {"date": weather_data['data'][0]['coordinates'][0]['dates'][1]['date'], "min_temp": weather_data['data'][2]['coordinates'][0]['dates'][1]['value'], "max_temp": weather_data['data'][3]['coordinates'][0]['dates'][1]['value'], "emoji": weather_emojis.get(weather_data['data'][1]['coordinates'][0]['dates'][1]['value'], "")},
