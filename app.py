@@ -3,6 +3,7 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 import streamlit as st
 import requests
+from datetime import datetime, timedelta
 
 # Load environment variables
 load_dotenv()
@@ -37,14 +38,26 @@ def generate_filtered_recommendations(city, difficulty, length, elevation, seaso
     return response.text
 
 def get_weather_data(city):
-    api_key = os.getenv("OPENWEATHERMAP_API_KEY")
-    base_url = "http://api.openweathermap.org/data/2.5/weather"
+    base_url = "https://api.meteomatics.com"
+    username = os.getenv("METEOMATICS_USERNAME")
+    password = os.getenv("METEOMATICS_PASSWORD")
+    
+    # Get the current date and time
+    now = datetime.utcnow()
+    
+    # Define the parameters for the API request
     params = {
-        "q": city,
-        "appid": api_key,
-        "units": "metric"
+        "connector": "python_v1.0.0",
+        "time_series_start": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "time_series_end": (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "parameter": "t_2m:C,relative_humidity_2m:p",
+        "location": f"{city}",
+        "format": "json"
     }
-    response = requests.get(base_url, params=params)
+    
+    # Make the API request
+    response = requests.get(base_url, auth=(username, password), params=params)
+    
     if response.status_code == 200:
         return response.json()
     else:
@@ -54,9 +67,8 @@ def display_weather_info(city):
     weather_data = get_weather_data(city)
     if weather_data:
         st.subheader(f"Weather Forecast for {city}")
-        st.write(f"Temperature: {weather_data['main']['temp']}°C")
-        st.write(f"Humidity: {weather_data['main']['humidity']}%")
-        st.write(f"Weather Description: {weather_data['weather'][0]['description']}")
+        st.write(f"Temperature: {weather_data['data'][0]['coordinates'][0]['dates'][0]['value']}°C")
+        st.write(f"Relative Humidity: {weather_data['data'][1]['coordinates'][0]['dates'][0]['value']}%")
     else:
         st.warning("Failed to retrieve weather data.")
 
