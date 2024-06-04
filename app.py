@@ -161,15 +161,37 @@ def generate_popular_trails(city):
     prompt = f"""
     Provide the top 5 most popular and beautiful hiking trails in {city}, regardless of any specific filters.
     Include a brief description of each trail with relevant emojis, its difficulty level, length, elevation gain, notable features, and the AllTrails link.
-    Format the trails as a JSON array of objects, with each object containing the following keys: "name", "description", "difficulty", "length", "elevation", "features", "alltrails_link".
+    Format the response as follows:
+    Trail 1:
+    Name: [Trail Name]
+    Description: [Trail Description]
+    Difficulty: [Trail Difficulty]
+    Length: [Trail Length]
+    Elevation Gain: [Elevation Gain]
+    Notable Features: [Notable Features]
+    AllTrails Link: [AllTrails Link]
+
+    Trail 2:
+    Name: [Trail Name]
+    Description: [Trail Description]
+    Difficulty: [Trail Difficulty]
+    Length: [Trail Length]
+    Elevation Gain: [Elevation Gain]
+    Notable Features: [Notable Features]
+    AllTrails Link:
+    ...
+
+    Trail 5:
+    Name: [Trail Name]
+    Description: [Trail Description]
+    Difficulty: [Trail Difficulty]
+    Length: [Trail Length]
+    Elevation Gain: [Elevation Gain]
+    Notable Features: [Notable Features]
+    AllTrails Link: [AllTrails Link]
     """
     response = model.generate_content(prompt)
-    try:
-        trails = json.loads(response.text)
-        return trails
-    except json.JSONDecodeError:
-        st.warning("Failed to parse the generated trails. Please try again.")
-        return []
+    return response.text
 
 # def generate_popular_trails(city):
 #     prompt = f"""
@@ -210,15 +232,36 @@ def home():
 #         st.session_state.show_search_filters = True
 #         st.rerun()
 
-# Display Popular Trails
+# # Display Popular Trails
+# def display_popular_trails(city):
+#     st.header(f"Top 5 Popular Trails in {city}")
+#     popular_trails = generate_popular_trails(city)
+#     st.write(popular_trails)
+    
+#     if st.button("Dismiss and Proceed to Search"):
+#         st.session_state.show_search_filters = True
+#         st.rerun()
+
 def display_popular_trails(city):
     st.header(f"Top 5 Popular Trails in {city}")
     popular_trails = generate_popular_trails(city)
-    st.write(popular_trails)
+    
+    trails = popular_trails.split("\n\n")
+    for trail in trails:
+        if trail.strip():
+            trail_info = trail.split("\n")
+            for info in trail_info:
+                if info.startswith("Name:"):
+                    st.subheader(info.split(": ")[1])
+                elif info.startswith("AllTrails Link:"):
+                    st.write(f"[AllTrails Link]({info.split(': ')[1]})")
+                else:
+                    st.write(info)
+            st.write("---")
     
     if st.button("Dismiss and Proceed to Search"):
         st.session_state.show_search_filters = True
-        st.rerun()
+        st.experimental_rerun()
 
 # Display Search Filters and Recommendations
 def display_search_filters(city):
