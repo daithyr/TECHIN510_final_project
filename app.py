@@ -40,7 +40,7 @@ def home():
     city = st.text_input("Enter the city")
     if st.button("Get Recommendations"):
         st.session_state.city = city
-        st.experimental_rerun()
+        st.rerun()
 
 # Recommendations Page
 def recommendations():
@@ -67,7 +67,7 @@ def recommendations():
         st.write(filtered_recommendations)
     
     if st.button("Back to Home"):
-        st.experimental_rerun()
+        st.rerun()
 
 # Main App
 def main():
