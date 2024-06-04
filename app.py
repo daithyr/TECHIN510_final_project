@@ -55,7 +55,7 @@ def search():
     st.header(f"Search Hiking Trails in {city}")
     
     # City signature picture
-    st.image("https://example.com/city_image.jpg", use_column_width=True)
+    st.image("Garibaldi-Provincial-Park-Panorama-Ridge-Overnight-Backpacking-Trip-Sunset-BANNER-1.jpg", use_column_width=True)
     
     # Filter options
     difficulty = st.selectbox("Difficulty Level", ["Easy", "Moderate", "Difficult"])
