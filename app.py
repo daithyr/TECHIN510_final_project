@@ -145,6 +145,39 @@ def generate_recommendations(city, difficulty, length, elevation, season, pet_fr
     You are an expert in recommending hiking trails based on the city and user preferences.
     Provide the top 5 hiking trails for the given city that match the user's specific needs.
     Include a brief description of each trail with relevant emojis, its difficulty level, length, elevation gain, notable features, and the AllTrails link.
+    Format the response as follows:
+    Trail 1:
+    Name: [Trail Name]
+    Description: [Trail Description]
+    Difficulty: [Trail Difficulty]
+    Length: [Trail Length]
+    Elevation Gain: [Elevation Gain]
+    Pet-Friendly: [pet_friendly]
+    Notable Features: [Notable Features]
+    AllTrails Link: [AllTrails Link]
+
+    Trail 2:
+    Name: [Trail Name]
+    Description: [Trail Description]
+    Difficulty: [Trail Difficulty]
+    Length: [Trail Length]
+    Elevation Gain: [Elevation Gain]
+    Pet-Friendly: [pet_friendly]
+    Notable Features: [Notable Features]
+    AllTrails Link: [AllTrails Link]
+
+    ...
+
+    Trail 5:
+    Name: [Trail Name]
+    Description: [Trail Description]
+    Difficulty: [Trail Difficulty]
+    Length: [Trail Length]
+    Elevation Gain: [Elevation Gain]
+    Pet-Friendly: [pet_friendly]
+    Notable Features: [Notable Features]
+    AllTrails Link: [AllTrails Link]
+
     City: {city}
     Difficulty Level: {difficulty}
     Trail Length: {length} miles
@@ -152,10 +185,26 @@ def generate_recommendations(city, difficulty, length, elevation, season, pet_fr
     Season: {season}
     Pet-Friendly: {pet_friendly}
     User Preferences: {user_preferences}
-    Format the recommendations as a list of dictionaries, with each dictionary containing the following keys: "name", "description", "difficulty", "length", "elevation", "features", "alltrails_link".
     """
     response = model.generate_content(prompt)
-    return eval(response.text)
+    return response.text
+
+# def generate_recommendations(city, difficulty, length, elevation, season, pet_friendly, user_preferences):
+#     prompt = f"""
+#     You are an expert in recommending hiking trails based on the city and user preferences.
+#     Provide the top 5 hiking trails for the given city that match the user's specific needs.
+#     Include a brief description of each trail with relevant emojis, its difficulty level, length, elevation gain, notable features, and the AllTrails link.
+#     City: {city}
+#     Difficulty Level: {difficulty}
+#     Trail Length: {length} miles
+#     Elevation Gain: {elevation} feet
+#     Season: {season}
+#     Pet-Friendly: {pet_friendly}
+#     User Preferences: {user_preferences}
+#     Format the recommendations as a list of dictionaries, with each dictionary containing the following keys: "name", "description", "difficulty", "length", "elevation", "features", "alltrails_link".
+#     """
+#     response = model.generate_content(prompt)
+#     return eval(response.text)
 
 def generate_popular_trails(city):
     prompt = f"""
@@ -261,9 +310,8 @@ def display_popular_trails(city):
     
     if st.button("Dismiss and Proceed to Search"):
         st.session_state.show_search_filters = True
-        st.experimental_rerun()
+        st.rerun()
 
-# Display Search Filters and Recommendations
 def display_search_filters(city):
     st.header(f"Search Hiking Trails in {city}")
     
@@ -289,20 +337,65 @@ def display_search_filters(city):
         recommendations = generate_recommendations(city, difficulty, length, elevation, season, pet_friendly, user_preferences)
         st.subheader("Recommended Hiking Trails")
         
-        for trail in recommendations:
-            with st.expander(trail['name']):
-                st.write(trail['description'])
-                st.write(f"Difficulty: {trail['difficulty']}")
-                st.write(f"Length: {trail['length']} miles")
-                st.write(f"Elevation Gain: {trail['elevation']} feet")
-                st.write(f"Notable Features: {trail['features']}")
-                st.write(f"AllTrails Link: {trail['alltrails_link']}")
+        trails = recommendations.split("\n\n")
+        for trail in trails:
+            if trail.strip():
+                trail_info = trail.split("\n")
+                for info in trail_info:
+                    if info.startswith("Name:"):
+                        st.subheader(info.split(": ")[1])
+                    elif info.startswith("AllTrails Link:"):
+                        st.write(f"[AllTrails Link]({info.split(': ')[1]})")
+                    else:
+                        st.write(info)
+                st.write("---")
     
     # Back to city selection button
     if st.button("Back to City Selection"):
         st.session_state.pop("city", None)
         st.session_state.pop("show_search_filters", None)
         st.rerun()
+
+# # Display Search Filters and Recommendations
+# def display_search_filters(city):
+#     st.header(f"Search Hiking Trails in {city}")
+    
+#     # Weather Forecast
+#     display_weather_info(city)
+    
+#     # Filter options
+#     difficulty = st.selectbox("Difficulty Level", ["Easy", "Moderate", "Difficult"])
+#     length = st.slider("Trail Length (miles)", min_value=0.0, max_value=10.0, step=0.5)
+#     elevation = st.slider("Elevation Gain (feet)", min_value=0, max_value=1000, step=100)
+#     season = st.selectbox("Season", ["Spring", "Summer", "Fall", "Winter"])
+#     pet_friendly = st.checkbox("Pet-Friendly")
+    
+#     # Optional user preferences
+#     user_preferences = st.text_area("Specific Needs (optional)", "")
+    
+#     # Generate recommendations button
+#     if st.button("Get Recommendations"):
+#         summary = generate_summary(city, difficulty, length, elevation, season, pet_friendly, user_preferences)
+#         st.subheader("Summary of Your Preferences")
+#         st.write(summary)
+        
+#         recommendations = generate_recommendations(city, difficulty, length, elevation, season, pet_friendly, user_preferences)
+#         st.subheader("Recommended Hiking Trails")
+        
+#         for trail in recommendations:
+#             with st.expander(trail['name']):
+#                 st.write(trail['description'])
+#                 st.write(f"Difficulty: {trail['difficulty']}")
+#                 st.write(f"Length: {trail['length']} miles")
+#                 st.write(f"Elevation Gain: {trail['elevation']} feet")
+#                 st.write(f"Notable Features: {trail['features']}")
+#                 st.write(f"AllTrails Link: {trail['alltrails_link']}")
+    
+#     # Back to city selection button
+#     if st.button("Back to City Selection"):
+#         st.session_state.pop("city", None)
+#         st.session_state.pop("show_search_filters", None)
+#         st.rerun()
 
 # Search Page
 def search():
