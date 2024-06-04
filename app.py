@@ -66,11 +66,10 @@ def search():
         filtered_recommendations = generate_filtered_recommendations(city, difficulty, length, elevation, season, pet_friendly)
         st.write(filtered_recommendations)
         
-        # Display map with trail locations
-        map_data = ... # Retrieve latitude and longitude coordinates for each trail
-        m = folium.Map(location=[map_data[0]['lat'], map_data[0]['lon']], zoom_start=10)
-        for trail in map_data:
-            folium.Marker(location=[trail['lat'], trail['lon']], popup=trail['name']).add_to(m)
+        # Display overall traffic map of recommended trails
+        map_center = ... # Retrieve the center coordinates of the recommended trails area
+        m = folium.Map(location=map_center, zoom_start=10)
+        folium.Marker(location=map_center, popup="Recommended Trails Area").add_to(m)
         st.components.v1.html(m._repr_html_(), height=500)
     
     if st.button("Back to Home"):
@@ -86,11 +85,10 @@ def recommendation():
         recommendations = generate_recommendations(city)
         st.write(recommendations)
         
-        # Display map with trail locations
-        map_data = ... # Retrieve latitude and longitude coordinates for each trail
-        m = folium.Map(location=[map_data[0]['lat'], map_data[0]['lon']], zoom_start=10)
-        for trail in map_data:
-            folium.Marker(location=[trail['lat'], trail['lon']], popup=trail['name']).add_to(m)
+        # Display overall traffic map of recommended trails
+        map_center = ... # Retrieve the center coordinates of the recommended trails area
+        m = folium.Map(location=map_center, zoom_start=10)
+        folium.Marker(location=map_center, popup="Recommended Trails Area").add_to(m)
         st.components.v1.html(m._repr_html_(), height=500)
     
     if st.button("Back to Home"):
