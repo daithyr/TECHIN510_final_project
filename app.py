@@ -104,7 +104,7 @@ def home():
     st.title("Hiking Trail Recommendations")
     
     # City signature picture
-    st.image("https://example.com/city_image.jpg", use_column_width=True)
+    st.image("Garibaldi-Provincial-Park-Panorama-Ridge-Overnight-Backpacking-Trip-Sunset-BANNER-1.jpg", use_column_width=True)
     
     st.write("Enter a city to get personalized hiking trail recommendations.")
     city = st.text_input("Enter the city")
