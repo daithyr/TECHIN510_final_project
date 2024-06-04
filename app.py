@@ -158,27 +158,15 @@ def generate_recommendations(city, difficulty, length, elevation, season, pet_fr
     return eval(response.text)
 
 
+
 def generate_popular_trails(city):
     prompt = f"""
     Provide the top 5 most popular and beautiful hiking trails in {city}, regardless of any specific filters.
     Include a brief description of each trail with relevant emojis, its difficulty level, length, elevation gain, notable features, and the AllTrails link.
-    Format the trails as a JSON array of objects, with each object containing the following keys: "name", "description", "difficulty", "length", "elevation", "features", "alltrails_link".
+    Format the trails as a list of dictionaries, with each dictionary containing the following keys: "name", "description", "difficulty", "length", "elevation", "features", "alltrails_link".
     """
     response = model.generate_content(prompt)
-    try:
-        trails = json.loads(response.text)
-        return trails
-    except json.JSONDecodeError:
-        st.warning("Failed to parse the generated trails. Please try again.")
-        return []
-# def generate_popular_trails(city):
-#     prompt = f"""
-#     Provide the top 5 most popular and beautiful hiking trails in {city}, regardless of any specific filters.
-#     Include a brief description of each trail with relevant emojis, its difficulty level, length, elevation gain, notable features, and the AllTrails link.
-#     Format the trails as a list of dictionaries, with each dictionary containing the following keys: "name", "description", "difficulty", "length", "elevation", "features", "alltrails_link".
-#     """
-#     response = model.generate_content(prompt)
-#     return eval(response.text)
+    return eval(response.text)
 
 # Home Page
 def home():
