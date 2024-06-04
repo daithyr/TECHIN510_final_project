@@ -3,6 +3,7 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 import streamlit as st
 import folium
+from geopy.geocoders import Nominatim
 
 # Load environment variables
 load_dotenv()
@@ -36,6 +37,14 @@ def generate_filtered_recommendations(city, difficulty, length, elevation, seaso
     response = model.generate_content(prompt)
     return response.text
 
+def get_city_coordinates(city):
+    geolocator = Nominatim(user_agent="hiking_trail_app")
+    location = geolocator.geocode(city)
+    if location:
+        return [location.latitude, location.longitude]
+    else:
+        return None
+
 # Home Page
 def home():
     st.title("Hiking Trail Recommendations")
@@ -67,10 +76,13 @@ def search():
         st.write(filtered_recommendations)
         
         # Display overall traffic map of recommended trails
-        map_center = ... # Retrieve the center coordinates of the recommended trails area
-        m = folium.Map(location=map_center, zoom_start=10)
-        folium.Marker(location=map_center, popup="Recommended Trails Area").add_to(m)
-        st.components.v1.html(m._repr_html_(), height=500)
+        map_center = get_city_coordinates(city)
+        if map_center:
+            m = folium.Map(location=map_center, zoom_start=10)
+            folium.Marker(location=map_center, popup=f"{city} Recommended Trails Area").add_to(m)
+            st.components.v1.html(m._repr_html_(), height=500)
+        else:
+            st.warning("Unable to retrieve city coordinates. Map not available.")
     
     if st.button("Back to Home"):
         st.session_state.pop("page", None)
@@ -86,10 +98,13 @@ def recommendation():
         st.write(recommendations)
         
         # Display overall traffic map of recommended trails
-        map_center = ... # Retrieve the center coordinates of the recommended trails area
-        m = folium.Map(location=map_center, zoom_start=10)
-        folium.Marker(location=map_center, popup="Recommended Trails Area").add_to(m)
-        st.components.v1.html(m._repr_html_(), height=500)
+        map_center = get_city_coordinates(city)
+        if map_center:
+            m = folium.Map(location=map_center, zoom_start=10)
+            folium.Marker(location=map_center, popup=f"{city} Recommended Trails Area").add_to(m)
+            st.components.v1.html(m._repr_html_(), height=500)
+        else:
+            st.warning("Unable to retrieve city coordinates. Map not available.")
     
     if st.button("Back to Home"):
         st.session_state.pop("page", None)
