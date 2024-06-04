@@ -30,7 +30,7 @@ def get_weather_data(latitude, longitude):
     now = datetime.utcnow()
     
     # Define the parameters for the API request
-    parameters = "t_2m:C,weather_symbol_1h:idx,t_min_2m_24h:C,t_max_2m_24h:C"
+   parameters = "t_2m:C,weather_symbol_1h:idx,t_min_2m_24h:C,t_max_2m_24h:C,precip_type_5min:idx"
     
     # Define the time range for the next 3 days
     time_range = f"{now.strftime('%Y-%m-%dT%H:%M:%SZ')},{(now + timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ')},{(now + timedelta(days=2)).strftime('%Y-%m-%dT%H:%M:%SZ')},{(now + timedelta(days=3)).strftime('%Y-%m-%dT%H:%M:%SZ')}"
