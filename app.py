@@ -15,7 +15,7 @@ model = genai.GenerativeModel('gemini-pro')
 
 def get_city_coordinates(city):
     geolocator = Nominatim(user_agent="hiking_trail_app")
-    location = geolocator.geocode(city)
+    location = geolocator.geocode(city, timeout=5)
     if location:
         return location.latitude, location.longitude
     else:
