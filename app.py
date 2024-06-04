@@ -13,10 +13,56 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel('gemini-pro')
 
 def get_weather_data(city):
-    # ... (Weather API code remains the same)
+    base_url = "https://api.meteomatics.com"
+    username = os.getenv("METEOMATICS_USERNAME")
+    password = os.getenv("METEOMATICS_PASSWORD")
+    
+    # Get the current date and time
+    now = datetime.utcnow()
+    
+    # Define the parameters for the API request
+    params = {
+        "connector": "python_v1.0.0",
+        "time_series_start": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "time_series_end": (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "parameter": "t_2m:C,relative_humidity_2m:p",
+        "location": f"{city}",
+        "format": "json"
+    }
+    try:
+        # Make the API request
+        response = requests.get(base_url, auth=(username, password), params=params)
+        
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return None
+    except (RequestException, JSONDecodeError):
+        return None
+    # try:
+    #     # Make the API request
+    #     response = requests.get(base_url, auth=(username, password), params=params)
+        
+    #     print(f"API Request URL: {response.url}")
+    #     print(f"API Response Status Code: {response.status_code}")
+    #     print(f"API Response Content: {response.text}")
+        
+    #     if response.status_code == 200:
+    #         return response.json()
+    #     else:
+    #         return None
+    # except (RequestException, JSONDecodeError) as e:
+    #     print(f"Error: {str(e)}")
+    #     return None
 
 def display_weather_info(city):
-    # ... (Display weather info code remains the same)
+    weather_data = get_weather_data(city)
+    if weather_data:
+        st.subheader(f"Weather Forecast for {city}")
+        st.write(f"Temperature: {weather_data['data'][0]['coordinates'][0]['dates'][0]['value']}°C")
+        st.write(f"Relative Humidity: {weather_data['data'][1]['coordinates'][0]['dates'][0]['value']}%")
+    else:
+        st.warning("Failed to retrieve weather data.")
 
 def generate_summary(city, difficulty, length, elevation, season, pet_friendly, user_preferences):
     prompt = f"""
