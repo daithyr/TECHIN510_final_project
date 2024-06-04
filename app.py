@@ -180,19 +180,29 @@ def home():
         st.session_state.city = city
         st.rerun()
 
+# # Display Popular Trails
+# def display_popular_trails(city):
+#     st.header(f"Top 5 Popular Trails in {city}")
+#     popular_trails = generate_popular_trails(city)
+    
+#     for trail in popular_trails:
+#         with st.expander(trail['name']):
+#             st.write(trail['description'])
+#             st.write(f"Difficulty: {trail['difficulty']}")
+#             st.write(f"Length: {trail['length']} miles")
+#             st.write(f"Elevation Gain: {trail['elevation']} feet")
+#             st.write(f"Notable Features: {trail['features']}")
+#             st.write(f"AllTrails Link: {trail['alltrails_link']}")
+    
+#     if st.button("Dismiss and Proceed to Search"):
+#         st.session_state.show_search_filters = True
+#         st.rerun()
+
 # Display Popular Trails
 def display_popular_trails(city):
     st.header(f"Top 5 Popular Trails in {city}")
     popular_trails = generate_popular_trails(city)
-    
-    for trail in popular_trails:
-        with st.expander(trail['name']):
-            st.write(trail['description'])
-            st.write(f"Difficulty: {trail['difficulty']}")
-            st.write(f"Length: {trail['length']} miles")
-            st.write(f"Elevation Gain: {trail['elevation']} feet")
-            st.write(f"Notable Features: {trail['features']}")
-            st.write(f"AllTrails Link: {trail['alltrails_link']}")
+    st.write(popular_trails)
     
     if st.button("Dismiss and Proceed to Search"):
         st.session_state.show_search_filters = True
