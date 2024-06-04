@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import streamlit as st
 import requests
 from datetime import datetime, timedelta
+from geopy.geocoders import Nominatim
 
 # Load environment variables
 load_dotenv()
@@ -12,58 +13,52 @@ load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel('gemini-pro')
 
-# def get_weather_data(city):
-#     base_url = "https://api.meteomatics.com"
-#     username = os.getenv("METEOMATICS_USERNAME")
-#     password = os.getenv("METEOMATICS_PASSWORD")
-    
-#     # Get the current date and time
-#     now = datetime.utcnow()
-    
-#     # Define the parameters for the API request
-#     params = {
-#         "connector": "python_v1.0.0",
-#         "time_series_start": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
-#         "time_series_end": (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ"),
-#         "parameter": "t_2m:C,relative_humidity_2m:p",
-#         "location": f"{city}",
-#         "format": "json"
-#     }
-   
-#     try:
-#         # Make the API request
-#         response = requests.get(base_url, auth=(username, password), params=params)
-        
-#         print(f"API Request URL: {response.url}")
-#         print(f"API Response Status Code: {response.status_code}")
-#         print(f"API Response Content: {response.text}")
-        
-#         if response.status_code == 200:
-#             return response.json()
-#         else:
-#             return None
-#     except (RequestException, JSONDecodeError) as e:
-#         print(f"Error: {str(e)}")
-#         return None
-#          # try:
-#     #     # Make the API request
-#     #     response = requests.get(base_url, auth=(username, password), params=params)
-        
-#     #     if response.status_code == 200:
-#     #         return response.json()
-#     #     else:
-#     #         return None
-#     # except (RequestException, JSONDecodeError):
-#     #     return None
+def get_city_coordinates(city):
+    geolocator = Nominatim(user_agent="hiking_trail_app")
+    location = geolocator.geocode(city)
+    if location:
+        return location.latitude, location.longitude
+    else:
+        return None
 
-# def display_weather_info(city):
-#     weather_data = get_weather_data(city)
-#     if weather_data:
-#         st.subheader(f"Weather Forecast for {city}")
-#         st.write(f"Temperature: {weather_data['data'][0]['coordinates'][0]['dates'][0]['value']}°C")
-#         st.write(f"Relative Humidity: {weather_data['data'][1]['coordinates'][0]['dates'][0]['value']}%")
-#     else:
-#         st.warning("Failed to retrieve weather data.")
+def get_weather_data(latitude, longitude):
+    base_url = "https://api.meteomatics.com"
+    username = os.getenv("METEOMATICS_USERNAME")
+    password = os.getenv("METEOMATICS_PASSWORD")
+    
+    # Get the current date and time
+    now = datetime.utcnow()
+    
+    # Define the parameters for the API request
+    parameters = "t_2m:C"
+    
+    # Define the URL for the API request
+    url = f"{base_url}/{now.strftime('%Y-%m-%dT%H:%M:%SZ')}/{parameters}/{latitude},{longitude}/json"
+    
+    try:
+        # Make the API request
+        response = requests.get(url, auth=(username, password))
+        
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return None
+    except requests.exceptions.RequestException:
+        return None
+
+def display_weather_info(city):
+    coordinates = get_city_coordinates(city)
+    if coordinates:
+        latitude, longitude = coordinates
+        weather_data = get_weather_data(latitude, longitude)
+        if weather_data:
+            st.subheader(f"Weather Forecast for {city}")
+            temperature = weather_data['data'][0]['coordinates'][0]['dates'][0]['value']
+            st.write(f"Temperature: {temperature}°C")
+        else:
+            st.warning("Failed to retrieve weather data.")
+    else:
+        st.warning("Failed to retrieve city coordinates.")
 
 def generate_summary(city, difficulty, length, elevation, season, pet_friendly, user_preferences):
     prompt = f"""
@@ -109,7 +104,7 @@ def home():
     st.title("Hiking Trail Recommendations")
     
     # City signature picture
-    st.image("Garibaldi-Provincial-Park-Panorama-Ridge-Overnight-Backpacking-Trip-Sunset-BANNER-1.jpg", use_column_width=True)
+    st.image("https://example.com/city_image.jpg", use_column_width=True)
     
     st.write("Enter a city to get personalized hiking trail recommendations.")
     city = st.text_input("Enter the city")
