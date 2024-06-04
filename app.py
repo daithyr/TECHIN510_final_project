@@ -144,7 +144,7 @@ def generate_recommendations(city, difficulty, length, elevation, season, pet_fr
     prompt = f"""
     You are an expert in recommending hiking trails based on the city and user preferences.
     Provide the top 5 hiking trails for the given city that match the user's specific needs.
-    Include a brief description of each trail with relevant emojis, its difficulty level, length, elevation gain, notable features, and the AllTrails link.
+    Include a paragraph yet brief description of each trail with relevant emojis, its difficulty level, length, elevation gain, notable features, and the AllTrails link.
     Format the response as follows:
     Trail 1:
     Name: [Trail Name]
@@ -209,7 +209,7 @@ def generate_recommendations(city, difficulty, length, elevation, season, pet_fr
 def generate_popular_trails(city):
     prompt = f"""
     Provide the top 5 most popular and beautiful hiking trails in {city}, regardless of any specific filters.
-    Include a brief description of each trail with relevant emojis, its difficulty level, length, elevation gain, notable features, and the AllTrails link.
+    Include a paragraph yet brief description of each trail with relevant emojis, its difficulty level, length, elevation gain, notable features, and the AllTrails link.
     Format the response as follows:
     Trail 1:
     Name: [Trail Name]
