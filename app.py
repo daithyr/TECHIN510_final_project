@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 import streamlit as st
 import folium
 from geopy.geocoders import Nominatim
+import requests
+import streamlit as st
+
 
 # Load environment variables
 load_dotenv()
@@ -11,6 +14,30 @@ load_dotenv()
 # Configure the GenAI API
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel('gemini-pro')
+
+def get_weather_data(city):
+    api_key = "WEATHER_API_KEY"
+    base_url = "http://api.openweathermap.org/data/2.5/weather"
+    params = {
+        "q": city,
+        "appid": api_key,
+        "units": "metric"
+    }
+    response = requests.get(base_url, params=params)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return None
+
+def display_weather_info(city):
+    weather_data = get_weather_data(city)
+    if weather_data:
+        st.subheader(f"Weather Conditions in {city}")
+        st.write(f"Temperature: {weather_data['main']['temp']}°C")
+        st.write(f"Humidity: {weather_data['main']['humidity']}%")
+        st.write(f"Weather Description: {weather_data['weather'][0]['description']}")
+    else:
+        st.warning("Failed to retrieve weather data.")
 
 def generate_recommendations(city):
     prompt = f"""
@@ -44,6 +71,8 @@ def get_city_coordinates(city):
         return [location.latitude, location.longitude]
     else:
         return None
+
+
 
 # Home Page
 def home():
