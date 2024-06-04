@@ -48,6 +48,7 @@ def get_weather_data(latitude, longitude):
             return None
     except requests.exceptions.RequestException:
         return None
+
 def display_weather_info(city):
     coordinates = get_city_coordinates(city)
     if coordinates:
@@ -59,9 +60,7 @@ def display_weather_info(city):
             # Current temperature
             current_temp = weather_data['data'][0]['coordinates'][0]['dates'][0]['value']
             st.write(f"Current Temperature: {current_temp}°C")
-            
             weather_emojis = {1: "☀️", 2: "⛅", 3: "☁️", 4: "🌧️", 5: "❄️"}
-            
             # Weather forecast for the next 3 days
             forecast_data = [
                 {"date": weather_data['data'][0]['coordinates'][0]['dates'][1]['date'], "min_temp": weather_data['data'][2]['coordinates'][0]['dates'][1]['value'], "max_temp": weather_data['data'][3]['coordinates'][0]['dates'][1]['value'], "emoji": weather_emojis.get(weather_data['data'][1]['coordinates'][0]['dates'][1]['value'], "")},
@@ -69,19 +68,49 @@ def display_weather_info(city):
                 {"date": weather_data['data'][0]['coordinates'][0]['dates'][3]['date'], "min_temp": weather_data['data'][2]['coordinates'][0]['dates'][3]['value'], "max_temp": weather_data['data'][3]['coordinates'][0]['dates'][3]['value'], "emoji": weather_emojis.get(weather_data['data'][1]['coordinates'][0]['dates'][3]['value'], "")}
             ]
             
-            # Create a dropdown menu for selecting the day
-            selected_date = st.selectbox("Select a day", [datetime.strptime(day['date'], "%Y-%m-%dT%H:%M:%SZ").strftime("%a, %b %d") for day in forecast_data])
-            
-            # Find the selected day's data
-            selected_day = next(day for day in forecast_data if datetime.strptime(day['date'], "%Y-%m-%dT%H:%M:%SZ").strftime("%a, %b %d") == selected_date)
-            
-            # Display the weather information for the selected day
-            st.write(f"Weather Forecast for {selected_date}")
-            st.write(f"{selected_day['emoji']} {selected_day['min_temp']}°C - {selected_day['max_temp']}°C")
+            # Display weather forecast
+            for day in forecast_data:
+                date = datetime.strptime(day['date'], "%Y-%m-%dT%H:%M:%SZ").strftime("%a, %b %d")
+                st.write(f"{day['emoji']} {date}: {day['min_temp']}°C - {day['max_temp']}°C")
         else:
             st.warning("Failed to retrieve weather data.")
     else:
         st.warning("Failed to retrieve city coordinates.")
+
+# def display_weather_info(city):
+#     coordinates = get_city_coordinates(city)
+#     if coordinates:
+#         latitude, longitude = coordinates
+#         weather_data = get_weather_data(latitude, longitude)
+#         if weather_data:
+#             st.subheader(f"Weather Forecast for {city}")
+            
+#             # Current temperature
+#             current_temp = weather_data['data'][0]['coordinates'][0]['dates'][0]['value']
+#             st.write(f"Current Temperature: {current_temp}°C")
+            
+#             weather_emojis = {1: "☀️", 2: "⛅", 3: "☁️", 4: "🌧️", 5: "❄️"}
+            
+#             # Weather forecast for the next 3 days
+#             forecast_data = [
+#                 {"date": weather_data['data'][0]['coordinates'][0]['dates'][1]['date'], "min_temp": weather_data['data'][2]['coordinates'][0]['dates'][1]['value'], "max_temp": weather_data['data'][3]['coordinates'][0]['dates'][1]['value'], "emoji": weather_emojis.get(weather_data['data'][1]['coordinates'][0]['dates'][1]['value'], "")},
+#                 {"date": weather_data['data'][0]['coordinates'][0]['dates'][2]['date'], "min_temp": weather_data['data'][2]['coordinates'][0]['dates'][2]['value'], "max_temp": weather_data['data'][3]['coordinates'][0]['dates'][2]['value'], "emoji": weather_emojis.get(weather_data['data'][1]['coordinates'][0]['dates'][2]['value'], "")},
+#                 {"date": weather_data['data'][0]['coordinates'][0]['dates'][3]['date'], "min_temp": weather_data['data'][2]['coordinates'][0]['dates'][3]['value'], "max_temp": weather_data['data'][3]['coordinates'][0]['dates'][3]['value'], "emoji": weather_emojis.get(weather_data['data'][1]['coordinates'][0]['dates'][3]['value'], "")}
+#             ]
+            
+#             # Create a dropdown menu for selecting the day
+#             selected_date = st.selectbox("Select a day", [datetime.strptime(day['date'], "%Y-%m-%dT%H:%M:%SZ").strftime("%a, %b %d") for day in forecast_data])
+            
+#             # Find the selected day's data
+#             selected_day = next(day for day in forecast_data if datetime.strptime(day['date'], "%Y-%m-%dT%H:%M:%SZ").strftime("%a, %b %d") == selected_date)
+            
+#             # Display the weather information for the selected day
+#             st.write(f"Weather Forecast for {selected_date}")
+#             st.write(f"{selected_day['emoji']} {selected_day['min_temp']}°C - {selected_day['max_temp']}°C")
+#         else:
+#             st.warning("Failed to retrieve weather data.")
+#     else:
+#         st.warning("Failed to retrieve city coordinates.")
 
 # def display_weather_info(city):
 #     coordinates = get_city_coordinates(city)
