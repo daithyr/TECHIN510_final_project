@@ -60,11 +60,16 @@ def get_weather_data(city):
         # Make the API request
         response = requests.get(base_url, auth=(username, password), params=params)
         
+        print(f"API Request URL: {response.url}")
+        print(f"API Response Status Code: {response.status_code}")
+        print(f"API Response Content: {response.text}")
+        
         if response.status_code == 200:
             return response.json()
         else:
             return None
-    except (RequestException, JSONDecodeError):
+    except (RequestException, JSONDecodeError) as e:
+        print(f"Error: {str(e)}")
         return None
 
 def display_weather_info(city):
