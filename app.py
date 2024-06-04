@@ -21,43 +21,22 @@ def generate_recommendations(city, user_preferences):
     response = model.generate_content(prompt)
     return response.text
 
-# App UI
-def main():
-    st.set_page_config(page_title="Hiking Trail Recommendations", page_icon=":mountain:", layout="wide")
+# Home Page
+def home():
+    st.title("Hiking Trail Recommendations")
+    st.write("Enter a city to get personalized hiking trail recommendations.")
+    city = st.text_input("Enter the city")
+    if city:
+        st.session_state.city = city
+        st.experimental_rerun()
+
+# Search Page
+def search():
+    city = st.session_state.city
+    st.header(f"Search Hiking Trails in {city}")
     
-    # Custom CSS styles
-    st.markdown(
-        """
-        <style>
-        .stApp {
-            background-color: #F0FFF0;
-        }
-        .stHeader {
-            background-color: #2E8B57;
-            color: white;
-            padding: 1rem;
-        }
-        .stTextInput label, .stSelectbox label {
-            color: #2E8B57;
-        }
-        .stButton button {
-            background-color: #2E8B57;
-            color: white;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-    
-    # Header section
-    st.header("Hiking Trail Recommendations")
-    
-    # User input section
-    col1, col2 = st.columns(2)
-    with col1:
-        city = st.text_input("Enter the city")
-    with col2:
-        user_preferences = st.text_area("Specific Needs (optional)", "")
+    # City signature picture
+    st.image("https://example.com/city_image.jpg", use_column_width=True)
     
     # Filter options
     difficulty = st.selectbox("Difficulty Level", ["Easy", "Moderate", "Difficult"])
@@ -66,14 +45,33 @@ def main():
     season = st.selectbox("Season", ["Spring", "Summer", "Fall", "Winter"])
     pet_friendly = st.checkbox("Pet-Friendly")
     
+    # Optional user preferences
+    user_preferences = st.text_area("Specific Needs (optional)", "")
+    
+    # Custom CSS styles
+    st.markdown(
+        """
+        <style>
+        .stSlider {
+            color: green;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    
     # Generate recommendations button
     if st.button("Get Recommendations"):
-        if city:
-            recommendations = generate_recommendations(city, user_preferences)
-            st.subheader("Recommended Hiking Trails")
-            st.write(recommendations)
-        else:
-            st.warning("Please enter a city to get recommendations.")
+        recommendations = generate_recommendations(city, user_preferences)
+        st.subheader("Recommended Hiking Trails")
+        st.write(recommendations)
+
+# Main App
+def main():
+    if "city" not in st.session_state:
+        home()
+    else:
+        search()
 
 if __name__ == "__main__":
     main()
